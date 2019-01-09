@@ -22,4 +22,4 @@ pip install PyTimeMux8x8Charact
 
 ## Launchers
 
-* PyDBView
+* GFETTimeMux8x8Char
