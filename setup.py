@@ -37,9 +37,10 @@ install_requires = ['numpy',
                     'matplotlib',
                     'quantities>=0.12',
                     'scipy',
-                    'neo>=0.5.2',
+                    'neo=0.6.1',
                     'nixio',
                     'deepdish',
+                    'PhyREC'
                     ]
 
 console_scripts = ['GFETTimeMux8x8Char = PyTimeMux8x8Charact.MuxTimeCharactGui:main',
