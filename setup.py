@@ -27,7 +27,7 @@ Created on Thu Dec 21 18:30:42 2017
 
 from setuptools import setup, find_packages
 
-_version = '0.0.1'
+_version = '0.0.1.2'
 
 long_description = """
                    Library for characterize 8x8 matrix device              
@@ -40,7 +40,8 @@ install_requires = ['numpy',
                     'neo==0.6.1',
                     'nixio',
                     'deepdish',
-                    'PhyREC'
+                    'PhyREC',
+                    'pygfet',
                     ]
 
 console_scripts = ['GFETTimeMux8x8Char = PyTimeMux8x8Charact.MuxTimeCharactGui:main',
