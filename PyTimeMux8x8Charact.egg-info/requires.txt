@@ -6,3 +6,4 @@ neo==0.6.1
 nixio
 deepdish
 PhyREC
+pygfet

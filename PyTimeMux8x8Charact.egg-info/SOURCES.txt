@@ -1,7 +1,10 @@
+LICENSE
+MANIFEST.in
 README.md
 setup.py
 PyTimeMux8x8Charact/MuxTimeCharactCore.py
 PyTimeMux8x8Charact/MuxTimeCharactGui.py
+PyTimeMux8x8Charact/MuxTimeCharactGui.ui
 PyTimeMux8x8Charact/__init__.py
 PyTimeMux8x8Charact.egg-info/PKG-INFO
 PyTimeMux8x8Charact.egg-info/SOURCES.txt
