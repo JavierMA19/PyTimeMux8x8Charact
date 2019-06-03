@@ -339,8 +339,10 @@ class ChannelsConfig():
         print 'InitDigitalChannels'
         DOChannels = []
         self.DigColumns = sorted(DigColumns)
+        print self.DigColumns, DigColumns
 
         for digc in sorted(self.DigColumns):
+            print digc
             DOChannels.append(self.doColumns[digc][0])
             DOChannels.append(self.doColumns[digc][1])
 
@@ -393,6 +395,7 @@ class ChannelsConfig():
 
     def GenerateDigitalSignal(self):
         print 'GenerateDigitalSignal'
+        print self.DigColumns
         DOut = np.array([], dtype=np.bool)
 
         for nCol in range(len(self.DigColumns)):
@@ -402,6 +405,8 @@ class ChannelsConfig():
             DOut = np.vstack((DOut, Cout)) if DOut.size else Cout
 
         DOut.astype(np.uint8)
+        print DOut.astype(np.uint8)
+
 
 #        SortDInds = []
 #        for line in DOut[0:-1:2, :]:
