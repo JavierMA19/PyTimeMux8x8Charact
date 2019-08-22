@@ -21,6 +21,30 @@ import quantities as pq
 ###############################################################################
 
 
+def GetDevName():
+    print('ReadAnalog GetDevName')
+    # Get Device Name of Daq Card
+    n = 1024
+    buff = ctypes.create_string_buffer(n)
+    Daq.DAQmxGetSysDevNames(buff, n)
+    if sys.version_info >= (3,):
+        value = buff.value.decode()
+    else:
+        value = buff.value
+
+    Dev = None
+    value = value.replace(' ', '')
+    for dev in value.split(','):
+        if dev.startswith('Sim'):
+            continue
+        Dev = dev + '/{}'
+
+    if Dev is None:
+        print 'ERRROORR dev not found ', value
+
+    return Dev
+
+
 class ReadAnalog(Daq.Task):
 
     '''
@@ -41,7 +65,7 @@ class ReadAnalog(Daq.Task):
         Daq.Task.__init__(self)
         self.Channels = InChans
 
-        Dev = self.GetDevName()
+        Dev = GetDevName()
         for Ch in self.Channels:
             self.CreateAIVoltageChan(Dev.format(Ch), "",
                                      Daq.DAQmx_Val_RSE,
@@ -49,21 +73,6 @@ class ReadAnalog(Daq.Task):
                                      Daq.DAQmx_Val_Volts, None)
 
         self.AutoRegisterDoneEvent(0)
-
-    def GetDevName(self,):
-        print 'ReadAnalog GetDevName'
-        # Get Device Name of Daq Card
-        n = 1024
-        buff = ctypes.create_string_buffer(n)
-        Daq.DAQmxGetSysDevNames(buff, n)
-        if sys.version_info >= (3,):
-            value = buff.value.decode()
-        else:
-            value = buff.value
-        value.split(',')[0]
-        Dev = value + '/{}'
-
-        return Dev
 
     def ReadData(self, Fs=1000, nSamps=10000, EverySamps=1000):
 
@@ -134,26 +143,12 @@ class WriteAnalog(Daq.Task):
     def __init__(self, Channels):
 
         Daq.Task.__init__(self)
-        Dev = self.GetDevName()
+        Dev = GetDevName()
         for Ch in Channels:
             self.CreateAOVoltageChan(Dev.format(Ch), "",
                                      -5.0, 5.0, Daq.DAQmx_Val_Volts, None)
         self.DisableStartTrig()
         self.StopTask()
-
-    def GetDevName(self,):
-        # Get Device Name of Daq Card
-        n = 1024
-        buff = ctypes.create_string_buffer(n)
-        Daq.DAQmxGetSysDevNames(buff, n)
-        if sys.version_info >= (3,):
-            value = buff.value.decode()
-        else:
-            value = buff.value
-        value.split(',')[0]
-        Dev = value + '/{}'
-
-        return Dev
 
     def SetVal(self, value):
 
@@ -197,48 +192,25 @@ class WriteDigital(Daq.Task):
     def __init__(self, Channels):
         print 'Init Digital Channels'
         Daq.Task.__init__(self)
-        Dev = self.GetDevName()
+        Dev = GetDevName()
         for Ch in Channels:
+            print Ch
             self.CreateDOChan(Dev.format(Ch), "",
                               Daq.DAQmx_Val_ChanForAllLines)
 
         self.DisableStartTrig()
         self.StopTask()
 
-    def GetDevName(self,):
-        # Get Device Name of Daq Card
-        n = 1024
-        buff = ctypes.create_string_buffer(n)
-        Daq.DAQmxGetSysDevNames(buff, n)
-        if sys.version_info >= (3,):
-            value = buff.value.decode()
-        else:
-            value = buff.value
-        value.split(',')[0]
-        Dev = value + '/{}'
-
-        return Dev
-
     def SetDigitalSignal(self, Signal):
         print 'SetDigSignal', Signal, Signal.shape
         Sig = np.array(Signal, dtype=np.uint8)
         self.WriteDigitalLines(1, 1, 10.0, Daq.DAQmx_Val_GroupByChannel,
                                Sig, None, None)
-#
-#        read = c_int32()
-#        self.CfgSampClkTiming('ai/SampleClock', 1, Daq.DAQmx_Val_Rising,
-#                              Daq.DAQmx_Val_ContSamps, Signal.shape)
-#        self.CfgDigEdgeStartTrig('ai/StartTrigger', Daq.DAQmx_Val_Rising)
-#        self.WriteDigitalLines(Signal.shape, False, 1,
-#                               Daq.DAQmx_Val_GroupByChannel,
-#                               Signal, byref(read), None)
-#        self.StartTask()
-#        print 'End SetSingal', read
-
 
 ###############################################################################
 #####
 ###############################################################################
+
 
 class ChannelsConfig():
     # Daq card connections mapping 'Chname' : (DCout, ACout)
