@@ -40,7 +40,7 @@ def GetDevName():
         Dev = dev + '/{}'
 
     if Dev is None:
-        print 'ERRROORR dev not found ', value
+        print('ERRROORR dev not found ', value)
 
     return Dev
 
@@ -190,11 +190,11 @@ class WriteDigital(Daq.Task):
     Class to write data to Daq card
     '''
     def __init__(self, Channels):
-        print 'Init Digital Channels'
+        print('Init Digital Channels')
         Daq.Task.__init__(self)
         Dev = GetDevName()
         for Ch in Channels:
-            print Ch
+            print(Ch)
             self.CreateDOChan(Dev.format(Ch), "",
                               Daq.DAQmx_Val_ChanForAllLines)
 
@@ -202,7 +202,7 @@ class WriteDigital(Daq.Task):
         self.StopTask()
 
     def SetDigitalSignal(self, Signal):
-        print 'SetDigSignal', Signal, Signal.shape
+        print('SetDigSignal', Signal, Signal.shape)
         Sig = np.array(Signal, dtype=np.uint8)
         self.WriteDigitalLines(1, 1, 10.0, Daq.DAQmx_Val_GroupByChannel,
                                Sig, None, None)
@@ -292,20 +292,24 @@ class ChannelsConfig():
         else:
             self.GateChannelIndex = None
 
-        print 'Channels configurtation'
-        print 'Gate', self.GateChannelIndex
-        print 'Channels ', len(self.ChNamesList)
-        print 'ai list ->', InChans
+        print('Channels configurtation')
+        print('Gate', self.GateChannelIndex)
+        print('Channels ', len(self.ChNamesList))
+        print('ai list ->', InChans)
         for ch in sorted(Channels):
             if Configuration == 'DC':
-                print ch, ' DC -> ', self.aiChannels[ch][0], self.DCChannelIndex[ch]
+                print(ch, ' DC -> ', self.aiChannels[ch][0],
+                      self.DCChannelIndex[ch])
                 self.ACChannelIndex = self.DCChannelIndex
             elif Configuration == 'AC':
-                print ch, ' AC -> ', self.aiChannels[ch][1], self.ACChannelIndex[ch]
+                print(ch, ' AC -> ', self.aiChannels[ch][1],
+                      self.ACChannelIndex[ch])
                 self.DCChannelIndex = self.ACChannelIndex
             else:
-                print ch, ' DC -> ', self.aiChannels[ch][0], self.DCChannelIndex[ch]
-                print ch, ' AC -> ', self.aiChannels[ch][1], self.ACChannelIndex[ch]
+                print(ch, ' DC -> ', self.aiChannels[ch][0],
+                      self.DCChannelIndex[ch])
+                print(ch, ' AC -> ', self.aiChannels[ch][1],
+                      self.ACChannelIndex[ch])
 
         self.Inputs = ReadAnalog(InChans=InChans)
         # events linking
@@ -313,18 +317,18 @@ class ChannelsConfig():
         self.Inputs.DoneEvent = self.DoneEventCallBack
 
     def InitDigitalChannels(self, DigColumns=None):
-        print 'InitDigitalChannels'
+        print('InitDigitalChannels')
         DOChannels = []
         self.DigColumns = sorted(DigColumns)
-        print self.DigColumns, DigColumns
+        print(self.DigColumns, DigColumns)
 
         for digc in sorted(self.DigColumns):
-            print digc
+            print(digc)
             DOChannels.append(self.doColumns[digc][0])
             DOChannels.append(self.doColumns[digc][1])
 
-        print DigColumns
-        print DOChannels
+        print(DigColumns)
+        print(DOChannels)
         self.ColumnsControl = WriteDigital(Channels=DOChannels)
 
         ChannelNames = []
@@ -332,7 +336,7 @@ class ChannelsConfig():
             for nCol in range(len(DigColumns)):
                 ChannelNames.append(self.ChNamesList[nRow]+DigColumns[nCol])
         self.ChannelNames = sorted(ChannelNames)
-        print self.ChannelNames
+        print(self.ChannelNames)
 
     def __init__(self, Channels, GateChannel=None, Configuration='Both',
                  ChVg='ao2', ChVs='ao1', ChVds='ao0', ChVsig='ao3'):
@@ -356,7 +360,7 @@ class ChannelsConfig():
 #        self.SetDigitalSignal(Signal=self.DOSignal)
 
     def SetBias(self, Vds, Vgs):
-        print 'ChannelsConfig SetBias Vgs ->', Vgs, 'Vds ->', Vds
+        print('ChannelsConfig SetBias Vgs ->', Vgs, 'Vds ->', Vds)
         self.VdsOut.SetVal(Vds)
         self.VsOut.SetVal(-Vgs)
         self.BiasVd = Vds-Vgs
@@ -371,8 +375,8 @@ class ChannelsConfig():
                              nSamps=nSamps)
 
     def GenerateDigitalSignal(self):
-        print 'GenerateDigitalSignal'
-        print self.DigColumns
+        print('GenerateDigitalSignal')
+        print(self.DigColumns)
         DOut = np.array([], dtype=np.bool)
 
         for nCol in range(len(self.DigColumns)):
@@ -382,7 +386,7 @@ class ChannelsConfig():
             DOut = np.vstack((DOut, Cout)) if DOut.size else Cout
 
         DOut.astype(np.uint8)
-        print DOut.astype(np.uint8)
+        print(DOut.astype(np.uint8))
 
 
 #        SortDInds = []
@@ -446,7 +450,7 @@ class ChannelsConfig():
                              EverySamps=EverySamps)
 
     def __del__(self):
-        print 'Delete class'
+        print('Delete class')
         if self.VgOut:
             self.VgOut.ClearTask()
         self.VdsOut.ClearTask()
@@ -746,7 +750,7 @@ class DataProcess(ChannelsConfig, FFTBodeAnalysis):
         x = np.arange(0, r)
         mm, oo = np.polyfit(x, data, 1)
         Dev = np.abs(np.mean(mm))
-        print 'DataProcess Attempt ', Dev
+        print('DataProcess Attempt ', Dev)
         if self.EventBiasAttempt:
             Ids = (data-self.BiasVd)/self.IVGainDC
             if not self.EventBiasAttempt(Ids,
@@ -781,7 +785,7 @@ class DataProcess(ChannelsConfig, FFTBodeAnalysis):
         FFTconf = self.BodeSignal.FFTconfs[self.iConf]
 
         if SeqConf:
-            print 'InitInptuns', SeqConf
+            print('InitInptuns', SeqConf)
             self.InitInputs(**SeqConf)
 
         signal, _ = self.BodeSignal.GenSignal(Ind=self.iConf)
@@ -790,7 +794,8 @@ class DataProcess(ChannelsConfig, FFTBodeAnalysis):
         if self.EventSetBodeLabel:
             self.EventSetBodeLabel(Vpp=self.BodeSignal.Vpp)
 
-        print 'Acquire Bode data for ', self.BodeSignal.BodeDuration[self.iConf], ' Seconds'
+        print('Acquire Bode data for ',
+              self.BodeSignal.BodeDuration[self.iConf], ' Seconds')
 
         self.ReadChannelsData(Fs=FFTconf.Fs,
                               nSamps=FFTconf.nFFT*self.BodeSignal.nAvg,
@@ -810,7 +815,7 @@ class DataProcess(ChannelsConfig, FFTBodeAnalysis):
 
             if self.SeqIndex <= len(self.InitConfig['Channels']) - 1:
                 Channel = [sorted(self.InitConfig['Channels'])[self.SeqIndex], ]
-                print 'Channel -->', Channel
+                print('Channel -->', Channel)
                 SeqConf['Channels'] = Channel
                 self.SeqIndex += 1
 
@@ -893,7 +898,7 @@ class DataProcess(ChannelsConfig, FFTBodeAnalysis):
         self.ACDataEveryNEvent = self.EventDataAcq
         if not self.PSDDuration:
             self.PSDDuration = self.PSDnFFT*self.PSDnAvg*(1/self.PSDFs)
-        print 'DataProcess Acquire PSD data for ', self.PSDDuration, 'seconds'
+        print('DataProcess Acquire PSD data for ', self.PSDDuration, 'seconds')
         self.ACDataDoneEvent = self.CalcPSDData
         self.ReadChannelsData(Fs=self.PSDFs,
                               nSamps=self.PSDnFFT*self.PSDnAvg,
@@ -946,7 +951,7 @@ class Charact(DataProcess):
     EventFFTDone = None
 
     def InitSweep(self, VdsVals, VgsVals, PSD=False, Bode=False):
-        print 'InitSweep'
+        print('InitSweep')
         self.SwVgsVals = VgsVals
         self.SwVdsVals = VdsVals
         self.Bode = Bode
@@ -970,12 +975,12 @@ class Charact(DataProcess):
         # Init Dictionaries
         self.InitDictionaries()
         self.DO = self.GenerateDigitalSignal()
-        print self.DO
+        print(self.DO)
         self.ColumnsControl.SetDigitalSignal(Signal=self.DO[:, self.SwDigInd])
         self.ApplyBiasPoint()
 
     def InitDictionaries(self):
-        print 'InitDictionaries'
+        print('InitDictionaries')
         # DC dictionaries
         if self.GateChannelIndex is None:
             Gate = False
@@ -983,7 +988,7 @@ class Charact(DataProcess):
             Gate = True
 
         self.DevACVals = None
-        print self.ChannelNames
+        print(self.ChannelNames)
         self.DevDCVals = PyData.InitDCRecord(nVds=self.SwVdsVals,
                                              nVgs=self.SwVgsVals,
                                              ChNames=self.ChannelNames,
@@ -1032,7 +1037,7 @@ class Charact(DataProcess):
             self.StopCharac()
 
     def ApplyBiasPoint(self):
-        print 'ApplyBiasPoint'
+        print('ApplyBiasPoint')
         self.GetBiasCurrent(Vds=self.SwVdsVals[self.SwVdsInd],
                             Vgs=self.SwVgsVals[self.SwVgsInd])
 
@@ -1041,7 +1046,7 @@ class Charact(DataProcess):
                                self.SwVgsVals[self.SwVgsInd])
 
     def ApplyNextDigital(self):
-        print 'ApplyNextDigital', self.SwDigInd
+        print('ApplyNextDigital', self.SwDigInd)
         self.ColumnsControl.SetDigitalSignal(Signal=self.DO[:, self.SwDigInd])
 
     def BiasAttemptCallBack(self, Ids, time, Dev):
@@ -1058,12 +1063,12 @@ class Charact(DataProcess):
 #        return self.CharactRunning
 
     def BiasDoneCallBack(self, Ids):
-        print 'BiasDoneCallback', Ids.shape, self.DigColumns[self.SwDigInd]
+        print('BiasDoneCallback', Ids.shape, self.DigColumns[self.SwDigInd])
         j = 0
         for chi, chn in enumerate(self.ChannelNames):
-            print chn, chi
+            print(chn, chi)
             if chn.endswith(self.DigColumns[self.SwDigInd]):
-                print chn, j
+                print(chn, j)
                 self.DevDCVals[chn]['Ids'][self.SwVgsInd,
                                            self.SwVdsInd] = Ids[j]
                 j += 1
@@ -1137,6 +1142,6 @@ class Charact(DataProcess):
             self.EventFFTDone(FFT)
 
     def StopCharac(self):
-        print 'STOP'
+        print('STOP')
         self.CharactRunning = False
 #        self.Inputs.ClearTask()
