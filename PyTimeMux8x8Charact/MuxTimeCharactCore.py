@@ -407,7 +407,7 @@ class ChannelsConfig():
     def _SortChannels(self, data, SortDict):
         (samps, inch) = data.shape
         sData = np.zeros((samps, len(SortDict)))
-        for chn, inds in SortDict.iteritems():
+        for chn, inds in SortDict.items():
             sData[:, inds[1]] = data[:, inds[0]]
         return sData
 
@@ -661,7 +661,7 @@ class FFTBodeAnalysis():
 
         if self.RemoveDC:
 
-            for chk, chi, in sorted(ChIndexes.iteritems()):
+            for chk, chi, in sorted(ChIndexes.items()):
                 Data[:, chi[1]] = Data[:, chi[1]] - np.mean(Data[:, chi[1]])
 
         FFTconf = self.BodeSignal.FFTconfs[Ind]
@@ -670,7 +670,7 @@ class FFTBodeAnalysis():
         Gm = np.ones((len(FFTconf.Finds),
                       inch))*np.complex(np.nan)
 
-        for chk, chi, in sorted(ChIndexes.iteritems()):
+        for chk, chi, in sorted(ChIndexes.items()):
             Out = self.BodeSignal.CalcFFT(Data=x[:, chi[1]],
                                           Ind=Ind)
 
@@ -1073,7 +1073,7 @@ class Charact(DataProcess):
                                            self.SwVdsInd] = Ids[j]
                 j += 1
 #        
-#        for chn, inds in self.DCChannelIndex.iteritems():
+#        for chn, inds in self.DCChannelIndex.items():
 #            self.DevDCVals[chn]['Ids'][self.SwVgsInd,
 #                                       self.SwVdsInd] = Ids[inds[1]]
 
@@ -1089,7 +1089,7 @@ class Charact(DataProcess):
                 self.ApplyNextBias()
 
     def GateDoneCallBack(self, Igs):
-        for chn, inds in self.GateChannelIndex.iteritems():
+        for chn, inds in self.GateChannelIndex.items():
             self.DevDCVals['Gate']['Ig'][self.SwVgsInd, self.SwVdsInd] = Igs
 
     def BodeDoneCallBack(self, Gm, SigFreqs):
@@ -1102,7 +1102,7 @@ class Charact(DataProcess):
                 self.DevACVals[chn]['Fgm'] = SigFreqs
                 j += 1
 
-#        for chn, inds in self.ACChannelIndex.iteritems():
+#        for chn, inds in self.ACChannelIndex.items():
 #            self.DevACVals[chn]['gm']['Vd{}'.format(self.SwVdsInd)][
 #                    self.SwVgsInd] = Gm[:, inds[1]]
 #            self.DevACVals[chn]['Fgm'] = SigFreqs
@@ -1121,7 +1121,7 @@ class Charact(DataProcess):
                 self.DevACVals[chn]['Fpsd'] = ff
                 j += 1
 
-#        for chn, inds in self.ACChannelIndex.iteritems():
+#        for chn, inds in self.ACChannelIndex.items():
 #            self.DevACVals[chn]['PSD']['Vd{}'.format(self.SwVdsInd)][
 #                    self.SwVgsInd] = psd[:, inds[1]]
 #            self.DevACVals[chn]['Fpsd'] = ff
