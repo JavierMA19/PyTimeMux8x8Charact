@@ -19,9 +19,9 @@ import deepdish as dd
 
 
 import MuxTimeCharactCore as PyCharact
-import PyGFET.PlotDataClass as PyFETpl
+import PyGFETdb.PlotDataClass as PyFETpl
 #import PyGFET.CharactCore as PyCharact
-from PyGFET.RecordPlot import PltSlot, PlotRecord
+#from PyGFETdb.RecordPlot import PltSlot, PlotRecord
 
 import numpy as np
 import pickle
@@ -116,9 +116,6 @@ class CharacLivePlot():
 ####
 ###############################################################################
 
-
-#GuiTestDC_ui = "GuiTestDC_v3.ui"  # Enter file here.
-#Ui_GuiTestDC, QtBaseClass = uic.loadUiType(GuiTestDC_ui)
 
 
 class CharactAPP(QtWidgets.QMainWindow):
@@ -564,7 +561,7 @@ def main():
     import pkg_resources
 
     # Add version option
-    __version__ = pkg_resources.require("PyGFET")[0].version
+    __version__ = pkg_resources.require("PyGFETdb")[0].version
     parser = argparse.ArgumentParser()
     parser.add_argument('--version', action='version',
                         version='%(prog)s {version}'.format(
